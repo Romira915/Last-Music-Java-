@@ -165,4 +165,9 @@ public class PrimaryController {
         App.UpdateMusicList updateMusicList = new App.UpdateMusicList();
         updateMusicList.run();
     }
+
+    @FXML
+    private void onPressedAboutMenu(ActionEvent event) {
+        App.aboutStage.show();
+    }
 }

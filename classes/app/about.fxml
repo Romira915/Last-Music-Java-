@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<BorderPane id="darkmode" stylesheets="@primary.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.AboutController">
+   <left>
+      <Label id="darkmode" text="操作方法" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets right="20.0" />
+         </BorderPane.margin></Label>
+   </left>
+   <top>
+      <Label id="darkmode" text="Last Music&#10;Version 1.0.0&#10;MIT License&#10;Copyright (c) 2021 Tanaka Yudai" BorderPane.alignment="CENTER">
+         <opaqueInsets>
+            <Insets />
+         </opaqueInsets>
+         <BorderPane.margin>
+            <Insets bottom="20.0" />
+         </BorderPane.margin>
+      </Label>
+   </top>
+   <bottom>
+      <Label id="darkmode" text="このアプリケーションはミュージックプレイヤーです。&#10;サポートするメディアフォーマットはJavaFXに依存します。&#10;ライブラリフォルダ内の&#10;拡張子.mp3, .mp4, .m4a, .wav, .aif, .aiff&#10;を対象にスキャンしますが再生できる保証はありません。&#10;再生できない場合、拡張子が間違っているかコンテナが対応していない可能性があります。&#10;初回起動時は特殊ディレクトリの「My Music (デフォルトでC:\Users\%USERNAME%\Music)」&#10;フォルダをスキャンします。&#10;&#10;Last Music の由来&#10;元々プログラミング言語Rustを用いたミュージックプレイヤーの開発を進めていて&#10;そのアプリケーションの名称をそのまま採用した。Lastは開発言語Rustからきている" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets top="20.0" />
+         </BorderPane.margin></Label>
+   </bottom>
+   <center>
+      <GridPane id="darkmode" alignment="CENTER_LEFT" hgap="5.0" vgap="10.0" BorderPane.alignment="CENTER">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" />
+          <ColumnConstraints hgrow="SOMETIMES" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+          <RowConstraints vgrow="SOMETIMES" />
+            <RowConstraints vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label id="darkmode" text="ミュージックを再生" />
+            <Label id="darkmode" text="・ミュージックタブから曲をダブルクリック&#10;・再生待ちリストに曲がスタックされている状態で再生ボタンを押す" GridPane.columnIndex="1" />
+            <Label id="darkmode" text="デフォルトのフォルダ以外の&#10;ミュージックファイルを再生する" GridPane.rowIndex="1" />
+            <Label id="darkmode" text="File -&gt; 監視するフォルダを追加/削除をクリックし&#10;フォルダを追加ボタンを押して対象のフォルダを&#10;追加する&#10;またフォルダを監視から外したい場合&#10;チェックを外す" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label id="darkmode" text="ミュージックを検索する" GridPane.rowIndex="2" />
+            <Label id="darkmode" text="ミュージックタブの左上の&#10;テキストフィールドから入力してEnter" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label id="darkmode" text="再生待ちリストに追加する" GridPane.rowIndex="3" />
+            <Label id="darkmode" text="曲を右クリックして&#10;再生待ちリストをクリック" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </GridPane>
+   </center>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</BorderPane>

@@ -1,3 +1,29 @@
+/*
+
+MIT License
+
+Copyright (c) 2021 Tanaka Yudai
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+*/
+
 package app;
 
 import javafx.application.Application;
@@ -61,6 +87,7 @@ import javafx.scene.Node;
 public class App extends Application {
     public static boolean isSeekBarScrolling = false;
     public static Stage observationFolderStage = new Stage();
+    public static Stage aboutStage = new Stage();
     public static String searchWord = "";
 
     private static final String DATABASE_PATH = "jdbc:sqlite:";
@@ -75,6 +102,7 @@ public class App extends Application {
     private static LinkedHashSet<String> musicPathListWithinLibrary = new LinkedHashSet<>();
     private static PrimaryController primaryController;
     private static SecondaryController secondaryController;
+    private static AboutController aboutController;
     private static MusicSelectEventHandler musicSelectEventHandler;
     private static OnEndOfMediaEventHandler onEndOfMediaEventHandler = new OnEndOfMediaEventHandler();
     private static ArrayList<Thread> threads = new ArrayList<>();
@@ -212,7 +240,7 @@ public class App extends Application {
     }
 
     private static enum Controller {
-        Primary, Secondary
+        Primary, Secondary, About
     }
 
     @Override
@@ -224,7 +252,6 @@ public class App extends Application {
         stage.setTitle("Last Music - ミュージックプレイヤー");
         // stage.setWidth(1280);
         stage.setHeight(720);
-        App.observationFolderStage = new Stage();
         App.observationFolderStage.setTitle("ライブラリ フォルダ");
         App.observationFolderStage.setScene(new Scene(loadFXML("secondary", Controller.Secondary)));
         // App.observationFolderStage.setOnCloseRequest(e -> e.consume());
@@ -232,6 +259,10 @@ public class App extends Application {
         App.observationFolderStage.initModality(Modality.WINDOW_MODAL);
         App.observationFolderStage.setResizable(false);
         App.observationFolderStage.setOnCloseRequest(new App.SecondaryStageCloseRequestedOnEventHandler());
+        App.aboutStage.setTitle("Last Musicについて");
+        App.aboutStage.setScene(new Scene(loadFXML("about", Controller.About)));
+        App.aboutStage.initOwner(stage);
+        App.aboutStage.setResizable(false);
 
         File libraryFolderlistFile = new File(App.LIBRARY_FOLDER_LIST_PATH);
         if (libraryFolderlistFile.exists()) {
@@ -400,6 +431,9 @@ public class App extends Application {
                 break;
             case Secondary:
                 App.secondaryController = fxmlLoader.getController();
+                break;
+            case About:
+                App.aboutController = fxmlLoader.getController();
                 break;
             default:
                 break;
