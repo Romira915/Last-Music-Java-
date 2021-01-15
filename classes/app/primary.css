@@ -1,0 +1,32 @@
+#root {
+  -fx-background-color: rgb(24, 24, 24);
+}
+
+#darkmode {
+  -fx-background-color: rgb(24, 24, 24);
+  -fx-text-fill: white;
+  -fx-foreground-color: white;
+}
+
+#lightmode {
+  -fx-background-color: white;
+  -fx-text-fill: rgb(24, 24, 24);
+}
+
+#primaryColor {
+  -fx-background-color: rgb(62, 166, 255);
+  -fx-text-fill: white;
+  -fx-foreground-color: white;
+}
+
+#slider {
+  -fx-background-color: rgb(63, 63, 63);
+  -fx-text-fill: rgb(24, 24, 24);
+  -fx-foreground-color: rgb(24, 24, 24);
+}
+
+#mainContents {
+  -fx-background-color: rgb(32, 32, 32);
+  -fx-text-fill: white;
+  -fx-foreground-color: white;
+}

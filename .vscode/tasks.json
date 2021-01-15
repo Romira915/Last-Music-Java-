@@ -1,22 +1,58 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "type": "shell",
-            "command": "mvn clean javafx:run",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            }
-        },
-        {
-            "label": "test",
-            "type": "shell",
-            "command": "mvn -B test",
-            "group": "test"
-        }
-    ]
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+
+  // This is for Java Programming 1 class & HCI Programming class 
+  // at Fukuoka Institute of Technology in Japan
+  // Copy this file into ".vscode" folder which is a subfolder of the workspace
+  // Type "Cntr + Shift + B" to compile and run the code
+  //
+  // Version 3.0.1, 2020.08.06
+  //
+  // Dependences on System Environment Variables:
+  // - JAVA_HOME is set on the JAVA SDK top folder such as C:\Program Files\Java\jdk-14.0.1
+  // - JAVAFX_HOME is set on the JAVAFX SDK top folder such as C:\Program Files\Java\javafx-sdk-11.0.2
+  // - PATH includes the bin folder of the JAVA SDK such as %JAVA_HOME%\bin
+  // - PATH also includes the bin folder of the JAVAFX SDK such as %JAVAFX_HOME%\bin
+
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "javac",
+      "type": "shell",
+      "command": "javac",
+      "args": [
+        "-encoding",
+        "UTF-8",
+        // "Shift_JIS",
+        "-cp",
+        "'.;${env:JAVAFX_HOME}\\lib\\*'",
+        "-d",
+        "./classes",
+        "'src/app/*.java'",
+        // "src/module-info.java"
+      ],
+    },
+    {
+      "label": "java",
+      "type": "shell",
+      "command": "java",
+      "args": [
+        "-cp",
+        "'.;classes'",
+        "--module-path",
+        "'${env:JAVAFX_HOME}\\lib;src/lib/'",
+        "--add-modules",
+        "javafx.controls,javafx.fxml,javafx.media",
+        "app.App",
+      ],
+      "group":{
+        "kind": "build",
+        "isDefault": true
+      },
+      "dependsOn": [
+        "javac"
+      ],
+    }
+  ]
 }
