@@ -41,7 +41,7 @@
         "-cp",
         "'.;classes'",
         "--module-path",
-        "'${env:JAVAFX_HOME}\\lib;src/lib/'",
+        "'${env:JAVAFX_HOME}\\lib'",
         "--add-modules",
         "javafx.controls,javafx.fxml,javafx.media",
         "app.App",

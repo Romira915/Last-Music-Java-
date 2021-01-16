@@ -30,6 +30,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -41,6 +42,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -61,7 +64,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
+import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -69,6 +72,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.Random;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
@@ -86,9 +90,12 @@ import javafx.scene.Node;
  */
 public class App extends Application {
     public static boolean isSeekBarScrolling = false;
+    public static App.PlayMode playMode = PlayMode.NotLoop;
+    public static boolean isShuffleMode = false;
     public static Stage observationFolderStage = new Stage();
     public static Stage aboutStage = new Stage();
     public static String searchWord = "";
+    public static ArrayList<Thread> threads = new ArrayList<>();
 
     private static final String DATABASE_PATH = "jdbc:sqlite:";
     private static final String LIBRARY_FOLDER_LIST_PATH = "appdata/libraryFolderlist";
@@ -105,11 +112,11 @@ public class App extends Application {
     private static AboutController aboutController;
     private static MusicSelectEventHandler musicSelectEventHandler;
     private static OnEndOfMediaEventHandler onEndOfMediaEventHandler = new OnEndOfMediaEventHandler();
-    private static ArrayList<Thread> threads = new ArrayList<>();
     private static boolean endThread = false;
     private static ContextMenu musicSelectContextMenu = new ContextMenu();
     private static String musicSelectedBySecondaryMouseClick = "";
     private static MusicButtonContextMenuEventHandler musicButtonContextMenuEventHandler = new MusicButtonContextMenuEventHandler();
+    private static Random random = new Random();
 
     private static class LibraryFolderScanThread implements Runnable {
         public void run() {
@@ -121,7 +128,11 @@ public class App extends Application {
                     return;
                 }
             }
-            Platform.runLater(new UpdateMusicList());
+
+            // Platform.runLater(new UpdateMusicList());
+            Thread thread = new Thread(new UpdateMusicList());
+            thread.start();
+            App.threads.add(thread);
         }
     }
 
@@ -130,7 +141,8 @@ public class App extends Application {
 
         public void run() {
             var musicListPaneList = App.primaryController.musicListPane;
-            musicListPaneList.getChildren().clear();
+            // musicListPaneList.getChildren().clear();
+            Platform.runLater(() -> musicListPaneList.getChildren().clear());
             for (String musicPath : App.musicPathListWithinLibrary) {
                 try {
                     File musicFile = new File(musicPath);
@@ -148,8 +160,16 @@ public class App extends Application {
                     Label fileExtensionLabel = new Label(fileExtension);
                     fileExtensionLabel.setStyle(UpdateMusicList.USE_STYLE);
 
-                    musicListPaneList.addColumn(0, musicButton);
-                    musicListPaneList.addColumn(1, fileExtensionLabel);
+                    Platform.runLater(() -> {
+                        musicListPaneList.addColumn(0, musicButton);
+                        musicListPaneList.addColumn(1, fileExtensionLabel);
+                    });
+
+                    if (App.endThread) {
+                        return;
+                    }
+                    // musicListPaneList.addColumn(0, musicButton);
+                    // musicListPaneList.addColumn(1, fileExtensionLabel);
                 } catch (Exception e) {
                     // e.printStackTrace();
                 }
@@ -197,18 +217,39 @@ public class App extends Application {
     private static class OnEndOfMediaEventHandler implements Runnable {
         @Override
         public void run() {
-            int nextIndex = App.playWaitingList.lastIndexOf(App.musicSetInNowPlayer) + 1;
+            if (App.endThread) {
+                return;
+            }
 
-            if (nextIndex < App.playWaitingList.size()) {
-                App.setMediaPlayer(App.playWaitingList.get(nextIndex));
+            if (App.isShuffleMode) {
+                App.toRandomMedia();
                 App.playMusic();
+                return;
             } else {
-                // Thread thread = new
-                // Thread(App.primaryController.mediaPlayerStatusStopChangedOn);
-                // thread.start();
-
-                App.stopMusic();
-                App.setSeekInRate(0.0);
+                switch (App.playMode) {
+                    case NotLoop:
+                        if (App.toNextMedia()) {
+                            App.playMusic();
+                        } else {
+                            App.stopMusic();
+                            App.setSeekInRate(0.0);
+                        }
+                        break;
+                    case AllLoop:
+                        if (App.toNextMedia()) {
+                            App.playMusic();
+                        } else {
+                            App.toFirstMedia();
+                            App.playMusic();
+                        }
+                        break;
+                    case SingleLoop:
+                        App.setSeekInRate(0.0);
+                        App.playMusic();
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -243,6 +284,10 @@ public class App extends Application {
         Primary, Secondary, About
     }
 
+    public static enum PlayMode {
+        NotLoop, AllLoop, SingleLoop,
+    }
+
     @Override
     public void start(Stage stage) throws IOException {
         App.musicSelectEventHandler = new App.MusicSelectEventHandler();
@@ -264,6 +309,11 @@ public class App extends Application {
         App.aboutStage.initOwner(stage);
         App.aboutStage.setResizable(false);
 
+        File appDataDir = new File(
+                App.LIBRARY_FOLDER_LIST_PATH.substring(0, App.LIBRARY_FOLDER_LIST_PATH.indexOf("/")));
+        if (!appDataDir.exists()) {
+            appDataDir.mkdirs();
+        }
         File libraryFolderlistFile = new File(App.LIBRARY_FOLDER_LIST_PATH);
         if (libraryFolderlistFile.exists()) {
             App.joinFolderToLibraryfromAppDataFile(libraryFolderlistFile);
@@ -301,7 +351,7 @@ public class App extends Application {
         App.endThread = true;
 
         for (Thread thread : App.threads) {
-            thread.join(1000);
+            thread.join(300);
         }
     }
 
@@ -314,17 +364,20 @@ public class App extends Application {
     }
 
     public static void fileSearch(String path, String extensions[]) {
+        if (App.endThread) {
+            return;
+        }
         try {
             File dir = new File(path);
             File files[] = dir.listFiles();
             for (File file : files) {
                 String fileName = file.getName();
                 if (file.isDirectory()) {
-                    fileSearch(path + "/" + fileName, extensions);
+                    fileSearch(path + "\\" + fileName, extensions);
                 } else {
                     for (String extension : extensions) {
                         if (fileName.endsWith(extension)) {
-                            App.musicPathListWithinLibrary.add(path + "/" + fileName);
+                            App.musicPathListWithinLibrary.add(path + "\\" + fileName);
                         }
                     }
                 }
@@ -506,6 +559,22 @@ public class App extends Application {
         }
     }
 
+    public static Status getMediaStatus() {
+        if (App.mediaPlayer != null) {
+            return App.mediaPlayer.getStatus();
+        }
+
+        return Status.UNKNOWN;
+    }
+
+    public static Duration getMediaCurrentTime() {
+        if (App.mediaPlayer != null) {
+            return App.mediaPlayer.getCurrentTime();
+        }
+
+        return Duration.UNKNOWN;
+    }
+
     public static boolean setMediaPlayer(String path) {
         File file = new File(path);
 
@@ -519,8 +588,23 @@ public class App extends Application {
                 App.mediaPlayer.setOnStopped(App.primaryController.mediaPlayerStatusStopChangedOn);
                 App.mediaPlayer.setOnPaused(App.primaryController.mediaPlayerStatusPauseChangedOn);
                 App.mediaPlayer.setOnEndOfMedia(App.onEndOfMediaEventHandler);
+                App.mediaPlayer.setOnReady(() -> {
+                    ObservableMap<String, Object> metadata = App.mediaPlayer.getMedia().getMetadata();
+                    App.primaryController.albumArt.setImage((Image) metadata.get("image"));
+                    String title = (String) metadata.get("title");
+                    String artist = (String) metadata.get("artist");
+                    String playerLabel = "";
+                    if (title == null || title == "") {
+                        playerLabel += App.filenameNoExtension(file.getName());
+                    } else {
+                        playerLabel += title;
+                    }
+                    if (artist != null && artist != "") {
+                        playerLabel += " - " + artist;
+                    }
+                    App.primaryController.musicPlayerTitleLabel.setText(playerLabel);
+                });
                 App.mediaPlayer.setVolume(App.primaryController.getVolumeRate());
-                App.primaryController.musicPlayerTitleLabel.setText(App.filenameNoExtension(file.getName()));
                 App.primaryController.visualizeSpeakerButton(App.mediaPlayer.isMute());
                 App.musicSetInNowPlayer = path;
 
@@ -567,7 +651,7 @@ public class App extends Application {
 
         for (String path : App.libraryFolderlist) {
             CheckBox folderCheckBox = new CheckBox(path);
-            folderCheckBox.setId("darkmode");
+            folderCheckBox.setId("mainContents");
             folderCheckBox.setSelected(true);
 
             folderListVBox.add(folderCheckBox);
@@ -575,8 +659,13 @@ public class App extends Application {
     }
 
     public static void addLibraryFolderlist(String path) {
-        App.libraryFolderlist.add(path);
-        App.updateObservationFolderUI();
+        if (App.libraryFolderlist.add(path)) {
+            CheckBox folderCheckBox = new CheckBox(path);
+            folderCheckBox.setId("mainContents");
+            folderCheckBox.setSelected(true);
+            App.secondaryController.observationFolderListVBox.getChildren().add(folderCheckBox);
+        }
+        // App.updateObservationFolderUI();
     }
 
     public static void onSecondaryStageClose() {
@@ -596,6 +685,65 @@ public class App extends Application {
         thread.start();
         App.threads.add(thread);
         App.exportLibraryFolderToFile(new File(App.LIBRARY_FOLDER_LIST_PATH));
+    }
+
+    public static boolean toNextMedia() {
+        int nextIndex = App.playWaitingList.lastIndexOf(App.musicSetInNowPlayer) + 1;
+
+        if (nextIndex < App.playWaitingList.size()) {
+            App.setMediaPlayer(App.playWaitingList.get(nextIndex));
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static boolean toPreviousMedia() {
+        int previousIndex = App.playWaitingList.lastIndexOf(App.musicSetInNowPlayer) - 1;
+
+        try {
+            App.setMediaPlayer(App.playWaitingList.get(previousIndex));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean toFirstMedia() {
+        try {
+            App.setMediaPlayer(App.playWaitingList.get(0));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean toLastMedia() {
+        try {
+            App.setMediaPlayer(App.playWaitingList.get(App.playWaitingList.size() - 1));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean toRandomMedia() {
+        try {
+            if (App.playWaitingList.size() == 1) {
+                App.setMediaPlayer(App.playWaitingList.get(0));
+            } else {
+                int nowIndex = App.playWaitingList.lastIndexOf(App.musicSetInNowPlayer);
+                int nextIndex;
+
+                while ((nextIndex = App.random.nextInt(App.playWaitingList.size())) == nowIndex) {
+                }
+
+                App.setMediaPlayer(App.playWaitingList.get(nextIndex));
+            }
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     public static void main(String[] args) {

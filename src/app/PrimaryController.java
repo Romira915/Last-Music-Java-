@@ -3,6 +3,7 @@ package app;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+
 import java.io.File;
 
 import javafx.beans.property.BooleanProperty;
@@ -21,6 +22,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.TilePane;
 import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaPlayer.Status;
 import javafx.scene.media.Media;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextField;
@@ -42,6 +44,13 @@ public class PrimaryController {
     private Slider volumeSlider;
 
     @FXML
+    private Button allLoopButton;
+    @FXML
+    private Button singleLoopButton;
+    @FXML
+    private Button shuffleButton;
+
+    @FXML
     public GridPane musicListPane;
     @FXML
     public GridPane playWaitingListPane;
@@ -50,6 +59,9 @@ public class PrimaryController {
     public Label musicPlayerTitleLabel;
     @FXML
     public Tab musicListTab;
+
+    @FXML
+    public ImageView albumArt;
 
     public MediaPlayerStatusPlayChangedOn mediaPlayerStatusPlayChangedOn = new MediaPlayerStatusPlayChangedOn();
     public MediaPlayerStatusStopChangedOn mediaPlayerStatusStopChangedOn = new MediaPlayerStatusStopChangedOn();
@@ -103,6 +115,41 @@ public class PrimaryController {
 
     public double getVolumeRate() {
         return this.volumeSlider.getValue();
+    }
+
+    private void activateAllLoop() {
+        this.allLoopButton.setVisible(true);
+        this.singleLoopButton.setVisible(false);
+        this.allLoopButton.setOpacity(1);
+
+        App.playMode = App.PlayMode.AllLoop;
+    }
+
+    private void activateSingleLoop() {
+        this.allLoopButton.setVisible(false);
+        this.singleLoopButton.setVisible(true);
+
+        App.playMode = App.PlayMode.SingleLoop;
+    }
+
+    private void deactivateLoop() {
+        this.allLoopButton.setVisible(true);
+        this.singleLoopButton.setVisible(false);
+        this.allLoopButton.setOpacity(0.5);
+
+        App.playMode = App.PlayMode.NotLoop;
+    }
+
+    private void activateShuffle() {
+        this.shuffleButton.setOpacity(1);
+
+        App.isShuffleMode = true;
+    }
+
+    private void deactivateShuffle() {
+        this.shuffleButton.setOpacity(0.5);
+
+        App.isShuffleMode = false;
     }
 
     @FXML
@@ -162,12 +209,72 @@ public class PrimaryController {
     private void onSearchFieldInput(ActionEvent event) {
         TextField target = (TextField) event.getTarget();
         App.searchWord = target.getText();
-        App.UpdateMusicList updateMusicList = new App.UpdateMusicList();
-        updateMusicList.run();
+        // App.UpdateMusicList updateMusicList = new App.UpdateMusicList();
+        // updateMusicList.run();
+
+        Thread thread = new Thread(new App.UpdateMusicList());
+        thread.start();
+        App.threads.add(thread);
     }
 
     @FXML
     private void onPressedAboutMenu(ActionEvent event) {
         App.aboutStage.show();
+    }
+
+    @FXML
+    private void onSkipNextButtonPressed(ActionEvent event) {
+        boolean isPlaying = App.getMediaStatus() == Status.PLAYING;
+
+        if (!App.toNextMedia()) {
+            App.toFirstMedia();
+        }
+
+        if (isPlaying) {
+            App.playMusic();
+        }
+    }
+
+    @FXML
+    private void onSkipPreviousButtonPressed(ActionEvent event) {
+        boolean isPlaying = App.getMediaStatus() == Status.PLAYING;
+
+        if (App.getMediaCurrentTime().toSeconds() < 2.0) {
+            if (!App.toPreviousMedia()) {
+                App.toLastMedia();
+            }
+        } else {
+            App.setSeekInRate(0);
+        }
+        if (isPlaying) {
+            App.playMusic();
+        }
+    }
+
+    @FXML
+    private void onAllLoopButtonPressed(ActionEvent event) {
+        Button target = (Button) event.getTarget();
+
+        if (target.getOpacity() <= 0.7) {
+            this.activateAllLoop();
+        } else {
+            this.activateSingleLoop();
+        }
+    }
+
+    @FXML
+    private void onSingleLoopButtonPressed(ActionEvent event) {
+        this.deactivateLoop();
+    }
+
+    @FXML
+    private void onShuffleButtonPressed(ActionEvent event) {
+        Button target = (Button) event.getTarget();
+
+        if (target.getOpacity() <= 0.7) {
+            this.activateShuffle();
+        } else {
+            this.deactivateShuffle();
+        }
     }
 }

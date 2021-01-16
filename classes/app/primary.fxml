@@ -46,7 +46,7 @@
                      <children>
                         <Button id="primaryColor" fx:id="playButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onPlayButtonPressed" stylesheets="@primary.css">
                            <graphic>
-                              <ImageView fitHeight="37.5" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="37.5" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../icons/baseline_play_arrow_black_18dp.png" />
                                  </image>
@@ -55,7 +55,7 @@
                         </Button>
                         <Button id="primaryColor" fx:id="pauseButton" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onPauseButtonPressed" stylesheets="@primary.css" visible="false">
                            <graphic>
-                              <ImageView fitHeight="37.5" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="37.5" pickOnBounds="true" preserveRatio="true">
                                  <image>
                                     <Image url="@../../icons/baseline_pause_black_18dp.png" />
                                  </image>
@@ -66,9 +66,27 @@
                   </StackPane>
                   <Button id="primaryColor" fx:id="onStopButtonPressed" contentDisplay="CENTER" mnemonicParsing="false" onAction="#onStopButtonPressed" stylesheets="@primary.css">
                      <graphic>
-                        <ImageView fitHeight="37.5" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="37.5" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../icons/baseline_stop_black_18dp.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button id="primaryColor" mnemonicParsing="false" onAction="#onSkipPreviousButtonPressed">
+                     <graphic>
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/baseline_skip_previous_black_18dp.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
+                  <Button id="primaryColor" mnemonicParsing="false" onAction="#onSkipNextButtonPressed">
+                     <graphic>
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/baseline_skip_next_black_18dp.png" />
                            </image>
                         </ImageView>
                      </graphic>
@@ -80,36 +98,76 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Slider id="slider" fx:id="seekBar" blockIncrement="5.0" max="1.0" minWidth="64.0" onMouseClicked="#onMusicSeekBarChanged" onMouseDragged="#onMusicSeekBarChanged" onMouseExited="#onMusicSeekBarReleased" onMouseReleased="#onMusicSeekBarReleased" prefWidth="64.0" stylesheets="@primary.css" />
+                        <Slider id="slider" fx:id="seekBar" blockIncrement="5.0" max="1.0" minWidth="64.0" onMouseClicked="#onMusicSeekBarChanged" onMouseDragged="#onMusicSeekBarChanged" onMouseExited="#onMusicSeekBarReleased" onMouseReleased="#onMusicSeekBarReleased" prefWidth="64.0" stylesheets="@primary.css">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Slider>
                      </children>
+                     <HBox.margin>
+                        <Insets right="5.0" />
+                     </HBox.margin>
                   </VBox>
+                  <HBox alignment="CENTER" spacing="8.0">
+                     <children>
+                        <StackPane>
+                           <children>
+                              <Button id="primaryColor" fx:id="volumeButton" mnemonicParsing="false" onAction="#onSpeakerButtonPressed" stylesheets="@primary.css">
+                                 <graphic>
+                                    <ImageView fitHeight="22.5" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../icons/baseline_volume_up_black_18dp.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                              </Button>
+                              <Button id="primaryColor" fx:id="muteButton" mnemonicParsing="false" onAction="#onSpeakerButtonPressed" stylesheets="@primary.css" visible="false">
+                                 <graphic>
+                                    <ImageView fitHeight="22.5" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../icons/baseline_volume_off_black_18dp.png" />
+                                       </image>
+                                    </ImageView>
+                                 </graphic>
+                                 <StackPane.margin>
+                                    <Insets />
+                                 </StackPane.margin>
+                              </Button>
+                           </children>
+                        </StackPane>
+                        <Slider id="slider" fx:id="volumeSlider" blockIncrement="5.0" max="1.0" onMouseClicked="#onVolumeBarChanged" onMouseDragged="#onVolumeBarChanged" prefWidth="98.0" value="1.0" />
+                     </children>
+                  </HBox>
                   <StackPane>
                      <children>
-                        <Button id="primaryColor" fx:id="volumeButton" mnemonicParsing="false" onAction="#onSpeakerButtonPressed" stylesheets="@primary.css">
+                        <Button id="primaryColor" fx:id="allLoopButton" mnemonicParsing="false" onAction="#onAllLoopButtonPressed" opacity="0.5">
                            <graphic>
-                              <ImageView fitHeight="22.5" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../icons/baseline_volume_up_black_18dp.png" />
+                                    <Image url="@../../icons/baseline_repeat_black_18dp.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
-                        <Button id="primaryColor" fx:id="muteButton" mnemonicParsing="false" onAction="#onSpeakerButtonPressed" stylesheets="@primary.css" visible="false">
+                        <Button id="primaryColor" fx:id="singleLoopButton" mnemonicParsing="false" onAction="#onSingleLoopButtonPressed" visible="false">
                            <graphic>
-                              <ImageView fitHeight="22.5" fitWidth="30.0" pickOnBounds="true" preserveRatio="true">
+                              <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
                                  <image>
-                                    <Image url="@../../icons/baseline_volume_off_black_18dp.png" />
+                                    <Image url="@../../icons/baseline_repeat_one_black_18dp.png" />
                                  </image>
                               </ImageView>
                            </graphic>
                         </Button>
                      </children>
                   </StackPane>
-                  <Slider id="slider" fx:id="volumeSlider" blockIncrement="5.0" max="1.0" onMouseClicked="#onVolumeBarChanged" onMouseDragged="#onVolumeBarChanged" scaleX="0.7" scaleY="0.7" value="1.0">
-                     <HBox.margin>
-                        <Insets left="-25.0" />
-                     </HBox.margin>
-                  </Slider>
+                  <Button id="primaryColor" fx:id="shuffleButton" mnemonicParsing="false" onAction="#onShuffleButtonPressed" opacity="0.5">
+                     <graphic>
+                        <ImageView fitHeight="20.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../icons/baseline_shuffle_black_18dp.png" />
+                           </image>
+                        </ImageView>
+                     </graphic>
+                  </Button>
                </children>
                <VBox.margin>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
@@ -119,115 +177,131 @@
       </VBox>
    </top>
    <center>
-      <TabPane side="LEFT" stylesheets="@primary.css" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-            <Tab fx:id="musicListTab" text="ミュージック">
-               <content>
-                  <VBox id="mainContents">
-                     <children>
-                        <HBox alignment="CENTER_RIGHT">
+      <StackPane>
+         <children>
+            <TabPane side="LEFT" stylesheets="@primary.css" tabClosingPolicy="UNAVAILABLE">
+              <tabs>
+                  <Tab fx:id="musicListTab" text="ミュージック">
+                     <content>
+                        <VBox id="mainContents">
                            <children>
-                              <ImageView fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@../../icons/baseline_search_black_18dp.png" />
-                                 </image>
-                              </ImageView>
-                              <TextField onAction="#onSearchFieldInput" />
-                           </children>
-                        </HBox>
-                        <GridPane gridLinesVisible="true">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="720.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label id="mainContents" text="タイトル">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label id="mainContents" text="拡張子" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </GridPane>
-                        <ScrollPane id="mainContents" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
-                           <content>
-                              <GridPane id="mainContents" fx:id="musicListPane" gridLinesVisible="true" vgap="5.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="ALWAYS" minWidth="720.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints vgrow="SOMETIMES" />
-                                </rowConstraints>
-                              </GridPane>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-            <Tab text="再生待ちリスト">
-               <content>
-                  <VBox id="mainContents">
-                     <children>
-                        <GridPane gridLinesVisible="true">
-                           <columnConstraints>
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="720.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
-                           </columnConstraints>
-                           <rowConstraints>
-                              <RowConstraints minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
-                           </rowConstraints>
-                           <children>
-                              <Label id="mainContents" text="タイトル">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                                 <GridPane.margin>
-                                    <Insets left="10.0" />
-                                 </GridPane.margin>
-                              </Label>
-                              <Label id="mainContents" text="拡張子" GridPane.columnIndex="1">
-                                 <font>
-                                    <Font size="18.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </GridPane>
-                        <ScrollPane id="mainContents" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
-                           <content>
-                              <GridPane id="mainContents" fx:id="playWaitingListPane" gridLinesVisible="true" vgap="5.0">
+                              <HBox alignment="CENTER_RIGHT">
+                                 <children>
+                                    <ImageView fitWidth="25.0" pickOnBounds="true" preserveRatio="true">
+                                       <image>
+                                          <Image url="@../../icons/baseline_search_black_18dp.png" />
+                                       </image>
+                                    </ImageView>
+                                    <TextField onAction="#onSearchFieldInput">
+                                       <HBox.margin>
+                                          <Insets />
+                                       </HBox.margin>
+                                    </TextField>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets right="8.0" top="8.0" />
+                                 </VBox.margin>
+                              </HBox>
+                              <GridPane gridLinesVisible="true">
                                  <columnConstraints>
-                                    <ColumnConstraints hgrow="ALWAYS" minWidth="720.0" />
-                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="720.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
                                  </columnConstraints>
                                  <rowConstraints>
-                                    <RowConstraints vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
                                  </rowConstraints>
+                                 <children>
+                                    <Label id="mainContents" text="タイトル">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets left="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Label id="mainContents" text="拡張子" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
                               </GridPane>
-                           </content>
-                        </ScrollPane>
-                     </children>
-                  </VBox>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
+                              <ScrollPane id="mainContents" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+                                 <content>
+                                    <GridPane id="mainContents" fx:id="musicListPane" gridLinesVisible="true" vgap="5.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="ALWAYS" minWidth="720.0" />
+                                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                    </GridPane>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+                  <Tab text="再生待ちリスト">
+                     <content>
+                        <VBox id="mainContents">
+                           <children>
+                              <GridPane gridLinesVisible="true">
+                                 <columnConstraints>
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="720.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                 </columnConstraints>
+                                 <rowConstraints>
+                                    <RowConstraints minHeight="35.0" prefHeight="35.0" vgrow="SOMETIMES" />
+                                 </rowConstraints>
+                                 <children>
+                                    <Label id="mainContents" text="タイトル">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets left="10.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <Label id="mainContents" text="拡張子" GridPane.columnIndex="1">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </GridPane>
+                              <ScrollPane id="mainContents" hbarPolicy="NEVER" vbarPolicy="ALWAYS">
+                                 <content>
+                                    <GridPane id="mainContents" fx:id="playWaitingListPane" gridLinesVisible="true" vgap="5.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="ALWAYS" minWidth="720.0" />
+                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                    </GridPane>
+                                 </content>
+                              </ScrollPane>
+                           </children>
+                        </VBox>
+                     </content>
+                  </Tab>
+              </tabs>
+            </TabPane>
+            <ImageView fx:id="albumArt" fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" StackPane.alignment="BOTTOM_RIGHT">
+               <StackPane.margin>
+                  <Insets right="18.0" />
+               </StackPane.margin>
+            </ImageView>
+         </children>
+      </StackPane>
    </center>
 </BorderPane>

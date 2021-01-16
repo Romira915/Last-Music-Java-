@@ -9,7 +9,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <VBox id="darkmode" spacing="10.0" stylesheets="@primary.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.SecondaryController">
    <children>
       <Label id="darkmode" text="メディアファイルを監視するフォルダを選択してください。">
@@ -53,7 +52,7 @@
       </Label>
       <VBox id="mainContents" fx:id="observationFolderListVBox" spacing="5.0">
          <VBox.margin>
-            <Insets left="10.0" />
+            <Insets left="10.0" right="10.0" />
          </VBox.margin>
       </VBox>
       <BorderPane>
